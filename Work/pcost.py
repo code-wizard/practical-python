@@ -1,30 +1,25 @@
 # pcost.py
 #
 # Exercise 1.27
-import csv
-import sys
+
+import report
+
 
 def portfolio_cost(filename):
-    total_cost = 0.0
+    '''
+    Computes the total cost (shares*price) of a portfolio file
+    '''
+    portfolio = report.read_portfolio(filename)
+    return sum([s['shares'] * s['price'] for s in portfolio])
 
-    with open(filename) as f:
-        rows = csv.reader(f)
-        headers = next(rows)
-        for row_no, row in enumerate(rows, start=1):
-            record = dict(zip(headers, row))
-            try:
-                n_shares = int(record['shares'])
-                price = float(record['price'])
-                total_cost += n_shares * price
-            except ValueError:
-                print(f'Row {row_no}: Bad row: {row}')
 
-    return total_cost
+def main(args):
+    if len(args) != 2:
+        raise SystemExit('Usage: %s portfoliofile' % args[0])
+    filename = args[1]
+    print('Total cost:', portfolio_cost(filename))
 
-if len(sys.argv) == 2:
-    filename = sys.argv[1]
-else:
-    filename = input('Enter a filename:')
 
-cost = portfolio_cost(filename)
-print('Total cost:', cost)
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
